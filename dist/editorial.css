@@ -54,3 +54,6 @@ summary{touch-action:manipulation;transition:color var(--motion-fast) ease}
 @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}*,*:before,*:after{animation:none!important;transition:none!important}::view-transition-group(*),::view-transition-old(*),::view-transition-new(*){animation:none!important}}
 
 @media(prefers-reduced-motion:reduce){.pill:active{transform:none}}
+
+/* Introduce the studio before showing selected work. */
+.home-intro{margin-bottom:80px}.home-intro .eyebrow{margin-bottom:24px}.home-intro p{max-width:45ch}@media(max-width:700px){.home-intro{margin-bottom:45px}}
