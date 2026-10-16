@@ -16,3 +16,16 @@ body[data-capture] *,body[data-capture] *:before,body[data-capture] *:after{anim
 .footer-wordmark{width:73%;max-width:960px;font-size:initial;line-height:1;letter-spacing:normal;margin:0;padding:40px 0 30px}
 .footer-wordmark .brand-type{width:100%}
 @media(max-width:700px){.brand-lockup{gap:8px}.brand-mark{width:27px}.brand-lockup .brand-type{width:105px}.footer-wordmark{width:72%;padding:30px 0 22px}}
+
+/* Student pathways and mentored internships. */
+.student-hero h1{max-width:18ch}.student-hero-actions{display:grid;gap:15px;justify-items:start}
+.intern-fee-note{font-size:13px;max-width:68ch;margin-bottom:35px}.intern-tracks{padding:0;margin:0;list-style:none}
+.intern-tracks li{display:grid;grid-template-columns:1.4fr .8fr;gap:80px;padding:28px 0;border-top:1px solid var(--line)}
+.intern-tracks .eyebrow{font-size:10px;margin-bottom:12px}.intern-tracks h3{font-size:39px;margin-bottom:15px}.intern-tracks p{font-size:14px;max-width:52ch}
+.intern-price{font-size:23px;letter-spacing:-.6px;padding-top:25px}.intern-price span{display:block;font-size:10px;letter-spacing:.6px;color:var(--muted);margin-top:10px}
+.intern-actions{margin-top:30px}.intern-list{padding:0;list-style:none;margin:20px 0 40px}.intern-list li{padding:10px 0;border-bottom:1px solid var(--line);font-size:14px}
+.intern-credentials h3{font-size:34px}.intern-credentials p{font-size:14px}.intern-roles h3{font-size:30px;max-width:25ch;margin-top:20px}.intern-roles .role-fit{font-size:12px}
+.student-form-grid{display:grid;grid-template-columns:1fr 1fr;gap:25px 30px}.student-form-grid label{min-width:0}.student-form-grid select{font-size:13px}.student-form-grid input{min-width:0}
+.footer-meta nav{flex-wrap:wrap;gap:10px 24px}
+@media(max-width:1000px){.desktop-nav{gap:23px;font-size:11px}.intern-tracks li{gap:35px}.intern-price{font-size:20px}.student-form-grid{grid-template-columns:1fr}.student-form-grid select{font-size:16px}}
+@media(max-width:700px){.student-hero h1{font-size:65px}.student-hero .hero-meta{flex-wrap:wrap;gap:15px}.intern-tracks li{grid-template-columns:1fr;gap:12px;padding-block:25px}.intern-price{padding-top:0;font-size:23px}.intern-price span{display:inline;margin-left:15px;font-size:9px}.intern-tracks p,.intern-list li{font-size:13px}.intern-tracks h3{font-size:35px}.intern-roles h3{font-size:28px}.intern-roles .role-fit{font-size:11px}.student-form-grid{grid-template-columns:1fr}.student-form-grid select{font-size:16px}.student-application .pill{white-space:normal}.student-canvas .paper-prototype{width:100%}.footer-meta nav{gap:8px 20px}}
