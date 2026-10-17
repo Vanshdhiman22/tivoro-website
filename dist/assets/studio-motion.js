@@ -1,0 +1,135 @@
+// Tivoro motion direction: readable by default, progressive and interruptible.
+(() => {
+  const capture = new URLSearchParams(location.search).has('capture');
+  const reduced = matchMedia('(prefers-reduced-motion: reduce)');
+  const fine = matchMedia('(hover:hover) and (pointer:fine)');
+  const moving = () => !capture && !reduced.matches;
+  const ease = 'cubic-bezier(.22,1,.36,1)';
+  const animations = new Set();
+  const play = (element, frames, options = {}) => {
+    if (!moving()) return;
+    const animation = element.animate(frames, {duration:900,easing:ease,fill:'backwards',...options});
+    animations.add(animation);
+    animation.finished.catch(() => {}).finally(() => animations.delete(animation));
+  };
+  const observer = new IntersectionObserver(entries => {
+    for (const entry of entries) {
+      if (!entry.isIntersecting) continue;
+      const element = entry.target;
+      observer.unobserve(element);
+      element.dataset.revealed = 'true';
+      if (!moving()) continue;
+      if (element.matches('h2')) {
+        element.querySelectorAll('.motion-word-inner').forEach((word, i) => play(word,
+          [{transform:'translate3d(0,108%,0) rotate(4deg)',opacity:0},{transform:'translate3d(0,0,0) rotate(0)',opacity:1}],
+          {duration:1050,delay:i*45}));
+      } else {
+        play(element,[{opacity:0,transform:'translate3d(0,24px,0)'},{opacity:1,transform:'translate3d(0,0,0)'}],{duration:850});
+      }
+    }
+  }, {threshold:.15,rootMargin:'0px 0px -30px 0px'});
+
+  if (!capture) {
+    document.querySelectorAll('main h2,.hello h2').forEach(heading => {
+      // Work by text nodes so authored emphasis and line breaks remain intact.
+      const walker = document.createTreeWalker(heading, NodeFilter.SHOW_TEXT);
+      const nodes = []; while (walker.nextNode()) nodes.push(walker.currentNode);
+      nodes.forEach(node => {
+        const fragment = document.createDocumentFragment();
+        for (const text of node.textContent.split(/(\s+)/)) {
+          if (!text.trim()) {fragment.append(document.createTextNode(text));continue;}
+          const outer = document.createElement('span'); outer.className = 'motion-word';
+          const inner = document.createElement('span'); inner.className = 'motion-word-inner';
+          inner.textContent = text; outer.append(inner); fragment.append(outer);
+        }
+        node.replaceWith(fragment);
+      });
+      observer.observe(heading);
+    });
+    document.querySelectorAll('.home-intro p,.home-intro .text-link,.steps article,.story-body>p,.case-copy,.detail-list li,.process-track>article,.contact-brief>div,.hello p,.hello .text-link,.footer-baseline,.faq-stack details').forEach(element => observer.observe(element));
+  }
+
+  const ribbon = document.querySelector('.studio-ribbon');
+  if (ribbon) {
+    const button = ribbon.querySelector('.ribbon-toggle');
+    let paused = false;
+    button.addEventListener('click', () => {
+      paused = !paused;
+      ribbon.toggleAttribute('data-paused', paused);
+      button.setAttribute('aria-pressed', String(paused));
+      button.setAttribute('aria-label', paused ? 'Play moving studio text' : 'Pause moving studio text');
+      button.firstElementChild.textContent = paused ? '▷' : 'Ⅱ';
+    });
+    new IntersectionObserver(entries => ribbon.toggleAttribute('data-in-view', entries[0].isIntersecting)).observe(ribbon);
+  }
+
+  const magnets = [...document.querySelectorAll('.pill,.nav-contact,.text-link')];
+  magnets.forEach(element => {
+    let rect, pending = 0, x = 0, y = 0;
+    element.classList.add('motion-magnet');
+    const reset = () => {
+      if (pending) cancelAnimationFrame(pending); pending = 0;
+      element.style.removeProperty('--magnet-x'); element.style.removeProperty('--magnet-y');
+    };
+    element.addEventListener('pointerenter', () => {rect = element.getBoundingClientRect();});
+    element.addEventListener('pointermove', event => {
+      if (!moving() || !fine.matches || event.pointerType === 'touch' || !rect) return;
+      x = Math.max(-6, Math.min(6, (event.clientX - rect.left - rect.width/2)*.08));
+      y = Math.max(-4, Math.min(4, (event.clientY - rect.top - rect.height/2)*.15));
+      if (!pending) pending = requestAnimationFrame(() => {
+        pending = 0; element.style.setProperty('--magnet-x', x+'px');element.style.setProperty('--magnet-y', y+'px');
+      });
+    }, {passive:true});
+    element.addEventListener('pointerleave', reset);
+    element.addEventListener('blur', reset);
+    reduced.addEventListener('change', reset);
+  });
+
+  document.querySelectorAll('.showcase-project .project-stage').forEach(stage => {
+    const label = document.createElement('span');
+    label.className = 'project-hover-label';label.setAttribute('aria-hidden','true');label.innerHTML = 'View<br>project ↗';
+    stage.append(label);
+    let rect;
+    stage.addEventListener('pointerenter', () => {rect = stage.getBoundingClientRect();});
+    stage.addEventListener('pointermove', event => {
+      if (!moving() || !fine.matches || event.pointerType === 'touch' || !rect) return;
+      stage.style.setProperty('--cursor-x', (event.clientX - rect.left)+'px');
+      stage.style.setProperty('--cursor-y', (event.clientY - rect.top)+'px');
+    }, {passive:true});
+  });
+
+  const progress = document.createElement('div'); progress.className = 'reading-progress';
+  progress.setAttribute('aria-hidden','true'); document.body.append(progress);
+  const photos = [...document.querySelectorAll('.project-stage.photo:not([data-project-flow]) .backdrop')];
+  let visiblePhotos = new Set(), scrollFrame = 0, pageHeight = 1;
+  const photoObserver = new IntersectionObserver(entries => entries.forEach(entry => {
+    if (entry.isIntersecting) visiblePhotos.add(entry.target);else visiblePhotos.delete(entry.target);
+  }));
+  photos.forEach(photo => photoObserver.observe(photo));
+  function scrollPaint() {
+    scrollFrame = 0;
+    if (!moving()) return;
+    progress.style.transform = `scaleX(${Math.max(0, Math.min(1,scrollY/pageHeight))})`;
+    const values = [...visiblePhotos].map(photo => {
+      const rect = photo.parentElement.getBoundingClientRect();
+      return [photo, Math.max(-1,Math.min(1,(rect.top+rect.height/2-innerHeight/2)/innerHeight))];
+    });
+    values.forEach(([photo,value]) => photo.style.transform = `translate3d(0,${value*28}px,0) scale(1.08)`);
+  }
+  function onScroll() {if (moving() && !scrollFrame) scrollFrame = requestAnimationFrame(scrollPaint);}
+  function measure() {pageHeight = Math.max(1,document.documentElement.scrollHeight-innerHeight);onScroll();}
+  window.addEventListener('scroll', onScroll, {passive:true});
+  window.addEventListener('resize', measure, {passive:true});
+  window.addEventListener('load', measure);document.fonts?.ready.then(measure);
+  new ResizeObserver(measure).observe(document.body);
+  document.addEventListener('visibilitychange', () => ribbon?.toggleAttribute('data-page-hidden', document.hidden));
+  reduced.addEventListener('change', () => {
+    if (reduced.matches) {
+      animations.forEach(animation => animation.cancel());
+      photos.forEach(photo => photo.style.removeProperty('transform'));
+      progress.style.transform = 'scaleX(0)';
+    } else measure();
+  });
+  document.body.dataset.studioMotion = moving() ? 'active' : 'static';
+  measure();
+})();

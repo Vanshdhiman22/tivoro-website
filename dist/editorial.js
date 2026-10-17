@@ -110,7 +110,7 @@ if (useMotion()) {
         observer.unobserve(entry.target);
       }
     }, {threshold:.09,rootMargin:'0px 0px -32px 0px'});
-    document.querySelectorAll('.section-top,.project-stage,.home-intro .wrap,.split-heading,.hello .wrap,.service-columns,.founder-grid,.product-canvas,.analytics-canvas').forEach(el => observer.observe(el));
+    document.querySelectorAll('.project-stage,.service-columns,.founder-grid,.product-canvas,.analytics-canvas').forEach(el => observer.observe(el));
   }
 }
 motionPreference.addEventListener('change',()=>{document.body.dataset.motion=useMotion()?'active':'reduced';if(!useMotion())activeMotion.forEach(animation=>animation.cancel());});
