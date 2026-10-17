@@ -4,7 +4,7 @@
   const reduced = matchMedia('(prefers-reduced-motion: reduce)');
   const fine = matchMedia('(hover:hover) and (pointer:fine)');
   const moving = () => !capture && !reduced.matches;
-  const ease = 'cubic-bezier(.22,1,.36,1)';
+  const ease = 'cubic-bezier(.25,.8,.25,1)';
   const animations = new Set();
   const play = (element, frames, options = {}) => {
     if (!moving()) return;
@@ -22,9 +22,9 @@
       if (element.matches('h2')) {
         element.querySelectorAll('.motion-word-inner').forEach((word, i) => play(word,
           [{transform:'translate3d(0,108%,0) rotate(4deg)',opacity:0},{transform:'translate3d(0,0,0) rotate(0)',opacity:1}],
-          {duration:600,delay:i*24}));
+          {duration:740,delay:i*30}));
       } else {
-        play(element,[{opacity:0,transform:'translate3d(0,24px,0)'},{opacity:1,transform:'translate3d(0,0,0)'}],{duration:450});
+        play(element,[{opacity:0,transform:'translate3d(0,24px,0)'},{opacity:1,transform:'translate3d(0,0,0)'}],{duration:620});
       }
     }
   }, {threshold:.15,rootMargin:'0px 0px -30px 0px'});

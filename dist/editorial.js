@@ -3,7 +3,7 @@ const captureMode = new URLSearchParams(location.search).has('capture');
 if (captureMode) {document.body.dataset.capture = '';document.documentElement.dataset.capture = '';}
 const motionPreference = matchMedia('(prefers-reduced-motion: reduce)');
 const useMotion = () => !captureMode && !motionPreference.matches;
-const ease = 'cubic-bezier(.22,1,.36,1)';
+const ease = 'cubic-bezier(.25,.8,.25,1)';
 const disclosures = new Map();
 
 document.querySelectorAll('details').forEach(details => {
@@ -93,9 +93,9 @@ document.body.dataset.motion = useMotion() ? 'active' : 'reduced';
 if (useMotion()) {
   document.querySelectorAll('main h1 .headline-inner').forEach((line,index) => play(line,
     [{transform:'translateY(105%)',opacity:0},{transform:'translateY(0)',opacity:1}],
-    {duration:550,delay:index*70,easing:ease,fill:'backwards'}));
+    {duration:720,delay:index*80,easing:ease,fill:'backwards'}));
   const heroFoot = document.querySelector('.home-hero .hero-foot,.page-hero .hero-foot,.studio-hero .hero-foot');
-  if(heroFoot) play(heroFoot,[{opacity:0,transform:'translateY(18px)'},{opacity:1,transform:'translateY(0)'}],{duration:450,delay:100,easing:ease,fill:'backwards'});
+  if(heroFoot) play(heroFoot,[{opacity:0,transform:'translateY(18px)'},{opacity:1,transform:'translateY(0)'}],{duration:600,delay:120,easing:ease,fill:'backwards'});
   if ('IntersectionObserver' in window) {
     const observer = new IntersectionObserver(entries => {
       for (const entry of entries) {
@@ -105,7 +105,7 @@ if (useMotion()) {
           const elements = grouped ? [...entry.target.children] : [entry.target];
           elements.filter(el=>!el.closest(".project-showcase")).forEach((el,index) => play(el,
             [{transform:'translateY(28px)',opacity:0},{transform:'translateY(0)',opacity:1}],
-            {duration:550,delay:grouped?index*60:0,easing:ease,fill:'backwards'}));
+            {duration:680,delay:grouped?index*75:0,easing:ease,fill:'backwards'}));
         }
         observer.unobserve(entry.target);
       }

@@ -11,7 +11,11 @@
   const bar = section.querySelector('.showcase-progress span');
   const reduced = matchMedia('(prefers-reduced-motion: reduce)');
   const capture = new URLSearchParams(location.search).has('capture');
+  // More native scroll travel slows the reel without slowing the whole page.
+  const travelRatio = 1.3;
+  const finePointer = matchMedia('(hover:hover) and (pointer:fine)');
   let enabled = false, start = 0, distance = 0, frame = 0, current = 0;
+  let previousTime = 0, lastScrollTime = 0;
   let positions = [], active = -1, resizeFrame = 0;
   const clamp = (n, a, b) => Math.max(a, Math.min(b, n));
 
@@ -31,19 +35,33 @@
     select(nearest);
     bar.style.transform = `scaleX(${distance ? clamp(x / distance, 0, 1) : 0})`;
   }
-  function tick() {
+  function tick(time) {
     frame = 0;
     if (!enabled) return;
-    current = clamp(scrollY - start, 0, distance);
+    const target = clamp((scrollY - start) / travelRatio, 0, distance);
+    const dt = previousTime ? Math.min(40, time - previousTime) : 16.67;
+    previousTime = time;
+    // A short, bounded glide removes wheel steps. Touch keeps native inertia.
+    // Never let the reel trail by more than 48px or run a long catch-up tail.
+    const soften = finePointer.matches && scrollY > start && scrollY < start + distance * travelRatio && time - lastScrollTime < 200;
+    if (soften) {
+      current = clamp(current, target - 48, target + 48);
+      current += (target - current) * (1 - Math.exp(-dt / 60));
+    } else current = target;
+    if (Math.abs(target - current) < .35) current = target;
     paint();
+    if (current !== target) frame = requestAnimationFrame(tick);
+    else previousTime = 0;
   }
   function update() {
+    lastScrollTime = performance.now();
     if (enabled && !frame) frame = requestAnimationFrame(tick);
   }
   function measure() {
     resizeFrame = 0;
     if (frame) cancelAnimationFrame(frame);
     frame = 0;
+    previousTime = 0;
     enabled = !reduced.matches && !capture && innerHeight >= 560;
     section.toggleAttribute('data-pinned', enabled);
     track.style.transform = '';
@@ -52,9 +70,9 @@
     distance = Math.max(0, track.scrollWidth - viewport.clientWidth);
     const first = cards[0].offsetLeft;
     positions = cards.map(card => clamp(card.offsetLeft - first, 0, distance));
-    section.style.height = enabled ? `${pin.offsetHeight + distance}px` : '';
+    section.style.height = enabled ? `${pin.offsetHeight + distance * travelRatio}px` : '';
     start = section.getBoundingClientRect().top + scrollY;
-    current = enabled ? clamp(scrollY - start, 0, distance) : 0;
+    current = enabled ? clamp((scrollY - start) / travelRatio, 0, distance) : 0;
     section.dataset.scrollMode = enabled ? 'pinned' : capture ? 'overview' : 'native';
     paint();
   }
@@ -63,7 +81,7 @@
   }
   function go(index, behavior = 'smooth') {
     index = clamp(index, 0, cards.length - 1);
-    if (enabled) window.scrollTo({top: start + positions[index], behavior});
+    if (enabled) window.scrollTo({top: start + positions[index] * travelRatio, behavior});
     else viewport.scrollTo({left: positions[index], behavior: reduced.matches ? 'instant' : behavior});
   }
   buttons.forEach((button, i) => button.addEventListener('click', () => go(i)));
