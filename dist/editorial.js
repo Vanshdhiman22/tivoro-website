@@ -1,6 +1,6 @@
 // Motion enhances the existing layout; native links and forms keep their behaviour.
 const captureMode = new URLSearchParams(location.search).has('capture');
-if (captureMode) document.body.dataset.capture = '';
+if (captureMode) {document.body.dataset.capture = '';document.documentElement.dataset.capture = '';}
 const motionPreference = matchMedia('(prefers-reduced-motion: reduce)');
 const useMotion = () => !captureMode && !motionPreference.matches;
 const ease = 'cubic-bezier(.22,1,.36,1)';
@@ -62,7 +62,7 @@ document.querySelectorAll('details').forEach(details => {
     event.preventDefault();
     const opening = !desired;
     if (opening && !isMenu) {
-      const group = details.closest('.faq-stack:not(.intern-roles)');
+      const group = details.closest('.faq-stack');
       group?.querySelectorAll('details').forEach(other => {
         if (other !== details) disclosures.get(other)?.setOpen(false);
       });
@@ -81,21 +81,40 @@ document.querySelectorAll('details').forEach(details => {
   motionPreference.addEventListener('change', () => setOpen(desired));
 });
 
-if (useMotion() && 'IntersectionObserver' in window) {
-  const observer = new IntersectionObserver(entries => {
-    for (const entry of entries) {
-      if (!entry.isIntersecting) continue;
-      if (useMotion()) entry.target.animate(
-        [{transform:'translateY(12px)',opacity:.8},{transform:'translateY(0)',opacity:1}],
-        {duration:700,easing:ease}
-      );
-      observer.unobserve(entry.target);
-    }
-  }, {threshold:.06,rootMargin:'0px 0px -28px 0px'});
-  document.querySelectorAll('.section-top,.project-stage,.studio-band h2,.split-heading,.hello h2').forEach(el => observer.observe(el));
+// Visible entrances and scroll choreography, with an always-readable fallback.
+const activeMotion = new Set();
+const play = (el, frames, options) => {
+  const animation = el.animate(frames, options);
+  activeMotion.add(animation);
+  animation.finished.catch(() => {}).finally(() => activeMotion.delete(animation));
+  return animation;
+};
+document.body.dataset.motion = useMotion() ? 'active' : 'reduced';
+if (useMotion()) {
+  document.querySelectorAll('main h1 .headline-inner').forEach((line,index) => play(line,
+    [{transform:'translateY(105%)',opacity:0},{transform:'translateY(0)',opacity:1}],
+    {duration:1050,delay:index*120,easing:ease,fill:'backwards'}));
+  const heroFoot = document.querySelector('.home-hero .hero-foot,.page-hero .hero-foot,.studio-hero .hero-foot');
+  if(heroFoot) play(heroFoot,[{opacity:0,transform:'translateY(18px)'},{opacity:1,transform:'translateY(0)'}],{duration:800,delay:360,easing:ease,fill:'backwards'});
+  if ('IntersectionObserver' in window) {
+    const observer = new IntersectionObserver(entries => {
+      for (const entry of entries) {
+        if (!entry.isIntersecting) continue;
+        if (useMotion()) {
+          const grouped = entry.target.matches('.service-columns,.founder-grid');
+          const elements = grouped ? [...entry.target.children] : [entry.target];
+          elements.forEach((el,index) => play(el,
+            [{transform:'translateY(28px)',opacity:0},{transform:'translateY(0)',opacity:1}],
+            {duration:900,delay:grouped?index*110:0,easing:ease,fill:'backwards'}));
+        }
+        observer.unobserve(entry.target);
+      }
+    }, {threshold:.09,rootMargin:'0px 0px -32px 0px'});
+    document.querySelectorAll('.section-top,.project-stage,.home-intro .wrap,.split-heading,.hello .wrap,.service-columns,.founder-grid,.product-canvas,.analytics-canvas').forEach(el => observer.observe(el));
+  }
 }
+motionPreference.addEventListener('change',()=>{document.body.dataset.motion=useMotion()?'active':'reduced';if(!useMotion())activeMotion.forEach(animation=>animation.cancel());});
+window.addEventListener('pageshow',event=>{if(event.persisted)activeMotion.forEach(animation=>animation.cancel());});
 
 const f=document.querySelector('#project-form');if(f)f.addEventListener('submit',e=>{e.preventDefault();const d=new FormData(f);const body=['Name: '+d.get('name'),'Business: '+d.get('business'),'Email: '+d.get('email'),'Service: '+d.get('service'),'',d.get('message')].join(String.fromCharCode(10));location.href='mailto:tivorosupport@gmail.com?subject='+encodeURIComponent('Project enquiry: '+(d.get('business')||d.get('name')))+'&body='+encodeURIComponent(body);document.querySelector('#form-status').textContent='Review the message in your email app before sending. If it did not open, email us directly.'});
 
-// Student programme application: visitor reviews and sends in WhatsApp.
-const studentApplication=document.querySelector('#student-application');if(studentApplication)studentApplication.addEventListener('submit',event=>{event.preventDefault();const data=new FormData(studentApplication);const lines=['Tivoro student / internship application'];for(const [key,value] of data.entries()){const field=studentApplication.elements.namedItem(key);const label=field?.closest('label')?.childNodes[0]?.textContent?.trim()||key;lines.push(label+': '+value);}const url='https://wa.me/918826758881?text='+encodeURIComponent(lines.join(String.fromCharCode(10)));window.open(url,'_blank','noopener,noreferrer');document.querySelector('#student-form-status').textContent='Review the message in WhatsApp before sending. If it did not open, use the direct discussion link.';});
