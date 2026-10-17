@@ -103,7 +103,7 @@ if (useMotion()) {
         if (useMotion()) {
           const grouped = entry.target.matches('.service-columns,.founder-grid');
           const elements = grouped ? [...entry.target.children] : [entry.target];
-          elements.forEach((el,index) => play(el,
+          elements.filter(el=>!el.closest(".project-showcase")).forEach((el,index) => play(el,
             [{transform:'translateY(28px)',opacity:0},{transform:'translateY(0)',opacity:1}],
             {duration:900,delay:grouped?index*110:0,easing:ease,fill:'backwards'}));
         }
