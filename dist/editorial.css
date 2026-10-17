@@ -50,5 +50,11 @@ html[data-capture]{scroll-behavior:auto}html[data-capture]::view-transition{disp
 
 .site-footer .footer-meta>span{color:#d6dfd1}
 
-/* The registered ThreeUI scene owns all artwork and interaction inside its frame. */
-.motion-study{padding-bottom:80px}.motion-study-caption{display:flex;justify-content:space-between;align-items:center;gap:20px;font-size:11px;padding-bottom:20px}.motion-study-caption>a{color:var(--muted);font-size:10px}.shader-frame{height:clamp(420px,72svh,760px);width:100%;background:#08080a}.shader-frame>.three-d-paper{height:100%;width:100%}@media(max-width:700px){.motion-study{padding-bottom:45px}.motion-study-caption{align-items:flex-start;font-size:10px;gap:20px}.motion-study-caption>a{font-size:9px;max-width:17ch;text-align:right}.shader-frame{height:clamp(420px,70svh,600px)}}
+
+/* Reference-inspired depth belongs to the real project visuals. */
+.project-screen{position:relative;transform-style:preserve-3d;will-change:transform}.project-screen img{transition:opacity 500ms ease,transform 1000ms var(--ease-out)}
+.project-stage:not(.photo) .project-screen,.project-link:hover .project-stage:not(.photo) .project-screen{transform:perspective(1200px) rotateX(var(--project-rx,0deg)) rotateY(var(--project-ry,0deg)) translateY(var(--project-lift,0px));transition:transform 650ms var(--ease-out)}
+.project-screen:after{content:'';position:absolute;inset:0;pointer-events:none;background:radial-gradient(circle at var(--project-light-x,50%) var(--project-light-y,50%),#fff4,transparent 65%);opacity:var(--project-light,0);transition:opacity 500ms ease;mix-blend-mode:screen}
+.project-stage.photo .project-screen[data-flow-ready]{background:transparent;border-color:transparent;box-shadow:none}.project-screen[data-flow-ready]>img{opacity:0}.project-screen[data-flow-ready]:after{display:none}
+.project-flow-canvas{position:absolute;left:-40px;top:-40px;width:calc(100% + 80px);height:calc(100% + 80px);display:block;pointer-events:none;filter:drop-shadow(0 18px 22px #0005);opacity:0;transition:opacity 700ms ease}.project-screen[data-flow-ready] .project-flow-canvas{opacity:1}
+@media(prefers-reduced-motion:reduce){.project-flow-canvas{display:none}.project-screen[data-flow-ready]>img{opacity:1}.project-screen[data-flow-ready]{background:var(--paper)!important;border-color:var(--ink)!important}.project-stage .project-screen{transform:none!important;will-change:auto}.project-screen:after{display:none}}

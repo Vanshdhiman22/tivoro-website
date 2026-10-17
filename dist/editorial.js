@@ -118,3 +118,13 @@ window.addEventListener('pageshow',event=>{if(event.persisted)activeMotion.forEa
 
 const f=document.querySelector('#project-form');if(f)f.addEventListener('submit',e=>{e.preventDefault();const d=new FormData(f);const body=['Name: '+d.get('name'),'Business: '+d.get('business'),'Email: '+d.get('email'),'Service: '+d.get('service'),'',d.get('message')].join(String.fromCharCode(10));location.href='mailto:tivorosupport@gmail.com?subject='+encodeURIComponent('Project enquiry: '+(d.get('business')||d.get('name')))+'&body='+encodeURIComponent(body);document.querySelector('#form-status').textContent='Review the message in your email app before sending. If it did not open, email us directly.'});
 
+
+// Depth and reflected light on the real portfolio, without introducing a demo.
+if(!captureMode){
+  const finePointer=matchMedia('(hover:hover) and (pointer:fine)');
+  document.querySelectorAll('.project-stage:not(.photo)').forEach(stage=>{
+    const reset=()=>{for(const key of ['--project-rx','--project-ry','--project-lift','--project-light'])stage.style.removeProperty(key);};
+    stage.addEventListener('pointermove',event=>{if(!useMotion()||!finePointer.matches||event.pointerType==='touch')return;const rect=stage.getBoundingClientRect(),x=(event.clientX-rect.left)/rect.width,y=(event.clientY-rect.top)/rect.height;stage.style.setProperty('--project-rx',((.5-y)*6)+'deg');stage.style.setProperty('--project-ry',((x-.5)*8)+'deg');stage.style.setProperty('--project-lift','-5px');stage.style.setProperty('--project-light','1');stage.style.setProperty('--project-light-x',(x*100)+'%');stage.style.setProperty('--project-light-y',(y*100)+'%');},{passive:true});
+    stage.addEventListener('pointerleave',reset);motionPreference.addEventListener('change',reset);
+  });
+}
