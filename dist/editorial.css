@@ -49,3 +49,6 @@ body[data-motion=active] .hand-note path{stroke-dasharray:140;animation:draw-not
 html[data-capture]{scroll-behavior:auto}html[data-capture]::view-transition{display:none!important}
 
 .site-footer .footer-meta>span{color:#d6dfd1}
+
+/* The registered ThreeUI scene owns all artwork and interaction inside its frame. */
+.motion-study{padding-bottom:80px}.motion-study-caption{display:flex;justify-content:space-between;align-items:center;gap:20px;font-size:11px;padding-bottom:20px}.motion-study-caption>a{color:var(--muted);font-size:10px}.shader-frame{height:clamp(420px,72svh,760px);width:100%;background:#08080a}.shader-frame>.three-d-paper{height:100%;width:100%}@media(max-width:700px){.motion-study{padding-bottom:45px}.motion-study-caption{align-items:flex-start;font-size:10px;gap:20px}.motion-study-caption>a{font-size:9px;max-width:17ch;text-align:right}.shader-frame{height:clamp(420px,70svh,600px)}}
