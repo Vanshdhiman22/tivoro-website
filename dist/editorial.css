@@ -95,3 +95,11 @@ body[data-capture] .project-showcase{height:auto!important}body[data-capture] .s
 @media(min-width:701px){.project-showcase{--reel-card:min(76vw,calc((100svh - 370px)*1.6 + 70px))}.project-showcase .project-stage,.project-showcase .project-stage.photo{padding:24px}.project-showcase[data-pinned] .photo .project-screen{max-width:90%}}
 @media(max-width:700px){.showcase-heading-aside{position:static;margin-top:13px}.showcase-instruction{text-align:right}.showcase-footer{column-gap:12px;row-gap:8px}.showcase-controls{gap:0}.showcase-skip{gap:8px}}
 @media(max-height:559px){.project-showcase{--reel-card:min(78vw,640px)}}
+
+/* Approved Tivoro studio wordmark: preserve the custom lettering at every size. */
+.brand-lockup{display:inline-flex;align-items:center;flex-shrink:0;gap:0;letter-spacing:0;line-height:1}
+.brand-wordmark-art{display:block;width:140px;height:auto;aspect-ratio:1990/495;background:var(--ink);-webkit-mask:url('assets/tivoro-wordmark-studio.svg') center/contain no-repeat;mask:url('assets/tivoro-wordmark-studio.svg') center/contain no-repeat}
+.footer-wordmark{width:min(72%,860px);flex-shrink:0;padding:20px 0 30px;margin:0;letter-spacing:0;line-height:1}
+.footer-wordmark .brand-wordmark-art{width:100%;height:auto;background:var(--paper)}
+.footer-baseline{align-items:center;padding-top:25px}.footer-note{flex-shrink:1}
+@media(max-width:700px){.brand-lockup .brand-wordmark-art{width:112px}.footer-wordmark{width:68%;padding:20px 0 25px}.footer-baseline{gap:20px;padding-top:15px}.footer-note{max-width:24ch;font-size:10px;line-height:1.6;padding:0}}
