@@ -7,14 +7,12 @@
   const viewport = section.querySelector('.showcase-window');
   const track = section.querySelector('.showcase-track');
   const cards = [...section.querySelectorAll('.showcase-card')];
-  const stages = cards.map(card => card.querySelector('.project-stage'));
   const buttons = [...section.querySelectorAll('[data-project-go]')];
   const bar = section.querySelector('.showcase-progress span');
   const reduced = matchMedia('(prefers-reduced-motion: reduce)');
   const capture = new URLSearchParams(location.search).has('capture');
-  let enabled = false, start = 0, distance = 0, frame = 0, current = 0, target = 0;
-  let previous = 0, positions = [], active = -1, resizeFrame = 0;
-  let centers = [], viewportWidth = 1;
+  let enabled = false, start = 0, distance = 0, frame = 0, current = 0;
+  let positions = [], active = -1, resizeFrame = 0;
   const clamp = (n, a, b) => Math.max(a, Math.min(b, n));
 
   function select(index) {
@@ -32,29 +30,15 @@
     const nearest = positions.reduce((best, pos, i) => Math.abs(pos - x) < Math.abs(positions[best] - x) ? i : best, 0);
     select(nearest);
     bar.style.transform = `scaleX(${distance ? clamp(x / distance, 0, 1) : 0})`;
-    stages.forEach((stage, i) => {
-      const depth = enabled ? clamp((centers[i] - x - viewportWidth/2)/viewportWidth, -1, 1) : 0;
-      stage.style.setProperty('--travel-y', (Math.abs(depth)*8)+'px');
-      stage.style.setProperty('--travel-rotate', (-depth*4)+'deg');
-      stage.style.setProperty('--travel-scale', String(1-Math.abs(depth)*.035));
-    });
   }
-  function tick(now) {
+  function tick() {
     frame = 0;
-    const dt = Math.min((now - previous) / 1000 || .016, .06);
-    previous = now;
-    current += (target - current) * (1 - Math.exp(-dt * 14));
-    if (Math.abs(target - current) < .15) current = target;
+    if (!enabled) return;
+    current = clamp(scrollY - start, 0, distance);
     paint();
-    if (current !== target) frame = requestAnimationFrame(tick);
-    else track.style.willChange = '';
   }
   function update() {
-    if (!enabled) return;
-    target = clamp(scrollY - start, 0, distance);
-    if (Math.abs(target - current) < .15) return;
-    track.style.willChange = 'transform';
-    if (!frame) { previous = performance.now(); frame = requestAnimationFrame(tick); }
+    if (enabled && !frame) frame = requestAnimationFrame(tick);
   }
   function measure() {
     resizeFrame = 0;
@@ -67,12 +51,10 @@
     // Read layout once; the scroll handler and animation loop only write transforms.
     distance = Math.max(0, track.scrollWidth - viewport.clientWidth);
     const first = cards[0].offsetLeft;
-    viewportWidth = viewport.clientWidth;
-    centers = cards.map(card => card.offsetLeft + card.offsetWidth/2);
     positions = cards.map(card => clamp(card.offsetLeft - first, 0, distance));
     section.style.height = enabled ? `${pin.offsetHeight + distance}px` : '';
     start = section.getBoundingClientRect().top + scrollY;
-    current = target = enabled ? clamp(scrollY - start, 0, distance) : 0;
+    current = enabled ? clamp(scrollY - start, 0, distance) : 0;
     section.dataset.scrollMode = enabled ? 'pinned' : capture ? 'overview' : 'native';
     paint();
   }
@@ -97,7 +79,7 @@
   });
   // Bring an offscreen project into view when reached with the keyboard.
   cards.forEach((card, i) => card.addEventListener('focusin', event => {
-    if (enabled && event.target.matches(':focus-visible')) { go(i, 'instant'); current = target = positions[i]; paint(); }
+    if (enabled && event.target.matches(':focus-visible')) { go(i, 'instant'); current = positions[i]; paint(); }
   }));
   viewport.addEventListener('scroll', () => { if (!enabled) paint(); }, {passive:true});
   window.addEventListener('scroll', update, {passive:true});

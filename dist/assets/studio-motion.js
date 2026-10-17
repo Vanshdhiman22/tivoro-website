@@ -8,7 +8,7 @@
   const animations = new Set();
   const play = (element, frames, options = {}) => {
     if (!moving()) return;
-    const animation = element.animate(frames, {duration:900,easing:ease,fill:'backwards',...options});
+    const animation = element.animate(frames, {duration:550,easing:ease,fill:'backwards',...options});
     animations.add(animation);
     animation.finished.catch(() => {}).finally(() => animations.delete(animation));
   };
@@ -22,9 +22,9 @@
       if (element.matches('h2')) {
         element.querySelectorAll('.motion-word-inner').forEach((word, i) => play(word,
           [{transform:'translate3d(0,108%,0) rotate(4deg)',opacity:0},{transform:'translate3d(0,0,0) rotate(0)',opacity:1}],
-          {duration:1050,delay:i*45}));
+          {duration:600,delay:i*24}));
       } else {
-        play(element,[{opacity:0,transform:'translate3d(0,24px,0)'},{opacity:1,transform:'translate3d(0,0,0)'}],{duration:850});
+        play(element,[{opacity:0,transform:'translate3d(0,24px,0)'},{opacity:1,transform:'translate3d(0,0,0)'}],{duration:450});
       }
     }
   }, {threshold:.15,rootMargin:'0px 0px -30px 0px'});
@@ -100,7 +100,7 @@
 
   const progress = document.createElement('div'); progress.className = 'reading-progress';
   progress.setAttribute('aria-hidden','true'); document.body.append(progress);
-  const photos = [...document.querySelectorAll('.project-stage.photo:not([data-project-flow]) .backdrop')];
+  const photos = [...document.querySelectorAll('.project-stage.photo .backdrop')].filter(photo => !photo.closest('.project-showcase'));
   let visiblePhotos = new Set(), scrollFrame = 0, pageHeight = 1;
   const photoObserver = new IntersectionObserver(entries => entries.forEach(entry => {
     if (entry.isIntersecting) visiblePhotos.add(entry.target);else visiblePhotos.delete(entry.target);

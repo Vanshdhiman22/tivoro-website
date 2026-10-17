@@ -131,3 +131,15 @@ html[data-page-transition=pending]::after{content:'';position:fixed;inset:0;z-in
 .page-transition-layer{position:fixed;inset:0;z-index:10002;pointer-events:none;isolation:isolate}.page-transition-layer canvas{position:absolute;inset:0;display:block;width:100%;height:100%}.transition-wordmark{position:absolute;left:50%;top:50%;width:clamp(140px,20vw,260px);background:var(--paper);transform:translate(-50%,-50%);opacity:0}
 @media(prefers-reduced-motion:reduce){.page-transition-layer,html[data-page-transition=pending]::after{display:none!important}}
 html[data-capture] .page-transition-layer{display:none!important}
+
+/* Performance pass: one compositor track, no per-card scroll deformation. */
+.project-showcase[data-pinned] .showcase-track{will-change:transform;backface-visibility:hidden}
+.project-showcase .project-stage{transform:none!important}.project-screen{will-change:auto}
+.project-showcase .photo .project-screen{border:4px solid var(--paper);border-radius:5px;box-shadow:0 12px 28px #0003}
+/* Navigation begins immediately. Animate snapshots without covering a load. */
+@view-transition{navigation:auto}
+::view-transition-old(root){animation:fast-page-away 100ms ease-out both}
+::view-transition-new(root){animation:fast-page-reveal 260ms cubic-bezier(.22,1,.36,1) both;mix-blend-mode:normal}
+@keyframes fast-page-away{to{opacity:0}}
+@keyframes fast-page-reveal{from{clip-path:circle(0 at var(--nav-x,50%) var(--nav-y,35%))}to{clip-path:circle(160% at var(--nav-x,50%) var(--nav-y,35%))}}
+@media(prefers-reduced-motion:reduce){::view-transition-old(root),::view-transition-new(root){animation:none!important}}
