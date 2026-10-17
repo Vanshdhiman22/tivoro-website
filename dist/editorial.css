@@ -144,4 +144,10 @@ html[data-capture] .page-transition-layer{display:none!important}
 @keyframes fast-page-reveal{from{clip-path:circle(0 at var(--nav-x,50%) var(--nav-y,35%))}to{clip-path:circle(160% at var(--nav-x,50%) var(--nav-y,35%))}}
 @media(prefers-reduced-motion:reduce){::view-transition-old(root),::view-transition-new(root){animation:none!important}}
 
-@view-transition{navigation:auto}
+@view-transition{navigation:none}
+
+/* Arrival-only polish: visible content immediately, no document snapshots. */
+html[data-page-arrival=quick] :is(.home-hero,.page-hero,.studio-hero){animation:quick-content-arrive 220ms cubic-bezier(.22,1,.36,1) backwards}
+@keyframes quick-content-arrive{from{opacity:.7;translate:0 5px}to{opacity:1;translate:0 0}}
+@media(prefers-reduced-motion:reduce){html[data-page-arrival] :is(.home-hero,.page-hero,.studio-hero){animation:none!important}}
+html[data-capture] :is(.home-hero,.page-hero,.studio-hero){animation:none!important}
