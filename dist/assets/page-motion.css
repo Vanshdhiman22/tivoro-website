@@ -1,0 +1,23 @@
+/* Tivoro: a consistent movement language across all seven business pages. */
+.motion-project-media{isolation:isolate}
+.work-media-count{position:absolute;top:20px;left:22px;z-index:3;font:500 10px/1.4 var(--sans);letter-spacing:1.5px;color:var(--ink);background:var(--paper);padding:6px 10px;border-radius:2px;pointer-events:none}
+.work-scroll-cue{display:flex;align-items:center;gap:12px;margin-top:28px;font:11px/1.4 var(--sans);color:var(--muted)}
+.work-scroll-cue>span{display:block;width:1px;height:32px;background:var(--line);position:relative;overflow:hidden}
+.work-scroll-cue>span:after{content:'';position:absolute;inset:0;background:var(--rust);transform-origin:top;animation:work-scroll-hint 2s ease-in-out 2}
+@keyframes work-scroll-hint{0%{transform:translateY(-105%)}70%,100%{transform:translateY(105%)}}
+.project-screen[data-scene-depth]{translate:0 var(--scene-y,0px);scale:1.015}
+.motion-rule{position:relative}
+.motion-rule:before{content:'';position:absolute;top:-1px;left:0;width:100%;height:1px;background:var(--rust);transform:scaleX(0);transform-origin:left;opacity:.45;transition:transform 950ms cubic-bezier(.25,.8,.25,1);pointer-events:none}
+.motion-rule[data-rule-visible]:before{transform:scaleX(1)}
+.desktop-nav a{position:relative}
+.desktop-nav a:after{content:'';position:absolute;bottom:5px;left:0;width:100%;height:1px;background:currentColor;transform:scaleX(0);transform-origin:right;transition:transform 450ms cubic-bezier(.25,.8,.25,1)}
+.desktop-nav a:hover:after,.desktop-nav a:focus-visible:after,.desktop-nav a[aria-current=page]:after{transform:scaleX(1);transform-origin:left}
+.project-caption .arrow,.case .text-link>span{display:inline-block;transition:translate 500ms cubic-bezier(.25,.8,.25,1)}
+.case:hover .project-caption .arrow,.case:focus-within .project-caption .arrow,.work-feature:hover .project-caption .arrow{translate:3px -3px}
+.paper-prototype{transition:translate 650ms cubic-bezier(.25,.8,.25,1),box-shadow 650ms ease}
+@media(hover:hover) and (pointer:fine){.paper-prototype:hover{translate:0 -8px;box-shadow:0 20px 36px #23251f1c}}
+.project-form input,.project-form select,.project-form textarea{transition:border-color 350ms ease,background-color 350ms ease}
+.project-form :is(input,select,textarea):focus{border-color:var(--rust);background-color:#a85b4307}
+@media(max-width:700px){.work-media-count{top:12px;left:12px;font-size:9px}.work-scroll-cue{margin-top:23px}.project-screen[data-scene-depth]{translate:none;scale:1}}
+@media(prefers-reduced-motion:reduce){.project-screen[data-scene-depth]{translate:none!important;scale:1!important}.motion-rule:before{transition:none;transform:scaleX(1)}.work-scroll-cue>span:after{animation:none;transform:none}.paper-prototype,.desktop-nav a:after,.project-caption .arrow,.case .text-link>span{transition:none!important}.paper-prototype:hover,.case:hover .project-caption .arrow{translate:none}}
+body[data-capture] .project-screen[data-scene-depth]{translate:none;scale:1}body[data-capture] .motion-rule:before{transform:scaleX(1)}body[data-capture] .work-scroll-cue>span:after{animation:none;transform:none}

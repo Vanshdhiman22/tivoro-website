@@ -46,7 +46,7 @@
       });
       observer.observe(heading);
     });
-    document.querySelectorAll('.home-intro p,.home-intro .text-link,.steps article,.story-body>p,.case-copy,.detail-list li,.process-track>article,.contact-brief>div,.hello p,.hello .text-link,.footer-baseline,.faq-stack details').forEach(element => observer.observe(element));
+    document.querySelectorAll('.home-intro p,.home-intro .text-link,.story-body>p,.case-copy,.contact-brief>div,.hello p,.hello .text-link,.footer-baseline,.faq-stack details').forEach(element => observer.observe(element));
   }
 
   const ribbon = document.querySelector('.studio-ribbon');
@@ -101,6 +101,14 @@
   const progress = document.createElement('div'); progress.className = 'reading-progress';
   progress.setAttribute('aria-hidden','true'); document.body.append(progress);
   const photos = [...document.querySelectorAll('.project-stage.photo .backdrop')].filter(photo => !photo.closest('.project-showcase'));
+  const screens = [...document.querySelectorAll('main .project-screen')].filter(screen => !screen.closest('.project-showcase'));
+  const screenCenters = new Map(), visibleScreens = new Set();
+  screens.forEach(screen => screen.setAttribute('data-scene-depth',''));
+  const screenObserver = new IntersectionObserver(entries => entries.forEach(entry => {
+    if (entry.isIntersecting) visibleScreens.add(entry.target); else visibleScreens.delete(entry.target);
+    onScroll();
+  }));
+  screens.forEach(screen => screenObserver.observe(screen));
   let visiblePhotos = new Set(), scrollFrame = 0, pageHeight = 1;
   const photoObserver = new IntersectionObserver(entries => entries.forEach(entry => {
     if (entry.isIntersecting) visiblePhotos.add(entry.target);else visiblePhotos.delete(entry.target);
@@ -115,9 +123,20 @@
       return [photo, Math.max(-1,Math.min(1,(rect.top+rect.height/2-innerHeight/2)/innerHeight))];
     });
     values.forEach(([photo,value]) => photo.style.transform = `translate3d(0,${value*28}px,0) scale(1.08)`);
+    // Cached geometry, at most the visible portfolio images, one frame per scroll.
+    if (innerWidth > 700 && fine.matches) visibleScreens.forEach(screen => {
+      const center = screenCenters.get(screen);
+      if (center === undefined) return;
+      const position = Math.max(-1,Math.min(1,(center-scrollY-innerHeight/2)/innerHeight));
+      screen.style.setProperty('--scene-y', `${position*14}px`);
+    });
   }
   function onScroll() {if (moving() && !scrollFrame) scrollFrame = requestAnimationFrame(scrollPaint);}
-  function measure() {pageHeight = Math.max(1,document.documentElement.scrollHeight-innerHeight);onScroll();}
+  function measure() {
+    pageHeight = Math.max(1,document.documentElement.scrollHeight-innerHeight);
+    screens.forEach(screen => {const rect=screen.parentElement.getBoundingClientRect();screenCenters.set(screen,rect.top+scrollY+rect.height/2);});
+    onScroll();
+  }
   window.addEventListener('scroll', onScroll, {passive:true});
   window.addEventListener('resize', measure, {passive:true});
   window.addEventListener('load', measure);document.fonts?.ready.then(measure);
@@ -127,6 +146,7 @@
     if (reduced.matches) {
       animations.forEach(animation => animation.cancel());
       photos.forEach(photo => photo.style.removeProperty('transform'));
+      screens.forEach(screen => screen.style.removeProperty('--scene-y'));
       progress.style.transform = 'scaleX(0)';
     } else measure();
   });
