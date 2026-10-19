@@ -1,5 +1,5 @@
-// Start native navigation immediately; the browser animates only once ready.
-// No click cancellation, delayed location.assign, canvas cover or hidden page.
+// Native navigation starts immediately. The early head bootstrap gives the
+// destination a CSS entrance, without a timer holding up the link's action.
 (() => {
   const normalize = path => path.replace(/\/index\.html$/, '/').replace(/\.html$/, '').replace(/\/$/, '') || '/';
   const pages = new Set(['/', '/about', '/work', '/contact', '/website-design-development', '/product-design-development', '/tools-analytics', '/privacy', '/terms']);
@@ -43,11 +43,14 @@
     if (capture || event.defaultPrevented || event.button!==0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
     const anchor=event.target.closest('a[href]'),url=destination(anchor);
     if (!url || normalize(url.pathname)===normalize(location.pathname)) return;
-    const rect=anchor.getBoundingClientRect();
-    const record={x:Math.max(.08,Math.min(.92,(event.detail?event.clientX:rect.left+rect.width/2)/innerWidth)),y:Math.max(.08,Math.min(.92,(event.detail?event.clientY:rect.top+rect.height/2)/innerHeight)),path:normalize(url.pathname),at:Date.now()};
+    const record={path:normalize(url.pathname),at:Date.now()};
     try {sessionStorage.setItem('tivoro-page-transition',JSON.stringify(record));}catch{}
     document.body.dataset.lastPageTransition='native-navigation';
     // Intentionally leave the link's default action untouched.
   });
   document.documentElement.dataset.navigationMode='immediate';
+  // A restored page keeps its scroll position and never replays its entrance.
+  window.addEventListener('pageshow',event=>{
+    if(event.persisted)delete document.documentElement.dataset.pageArrival;
+  });
 })();
