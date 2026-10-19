@@ -1,0 +1,21 @@
+import {build} from 'esbuild';
+import {readFile,writeFile,stat,mkdir} from 'node:fs/promises';
+import path from 'node:path';
+const root=process.cwd();
+await build({entryPoints:['src/site.js'],outfile:'dist/assets/site.min.js',bundle:true,minify:true,format:'iife',target:['es2022']});
+const config=JSON.parse(await readFile('site-config.json','utf8'));
+const descriptions=new Set();
+for(const page of [...config.pages,'404']){
+ const html=await readFile(`dist/${page}.html`,'utf8');
+ if((html.match(/<h1\b/g)||[]).length!==1)throw new Error(`Expected one page heading: ${page}`);
+ if(!html.includes('noindex, follow'))throw new Error(`Preview indexing guard missing: ${page}`);
+ const description=html.match(/<meta content="([^"]+)" name="description"/);
+ if(description){if(descriptions.has(description[1]))throw new Error('Duplicate description');descriptions.add(description[1]);}
+ for(const match of html.matchAll(/(?:src|href)="([^"#]+)"/g)){
+  const ref=match[1].split(/[?#]/)[0];
+  if(/^(https?:|mailto:|tel:|data:)/.test(ref))continue;
+  if(!ref)continue;
+  if(!(await stat(path.join(root,'dist',ref)).catch(()=>null)))throw new Error(`Missing ${ref} on ${page}`);
+ }
+}
+console.log('Built one shared script; validated nine pages plus 404 and local asset references.');

@@ -2,7 +2,7 @@
 // No click cancellation, delayed location.assign, canvas cover or hidden page.
 (() => {
   const normalize = path => path.replace(/\/index\.html$/, '/').replace(/\.html$/, '').replace(/\/$/, '') || '/';
-  const pages = new Set(['/', '/about', '/work', '/contact', '/website-design-development', '/product-design-development', '/tools-analytics']);
+  const pages = new Set(['/', '/about', '/work', '/contact', '/website-design-development', '/product-design-development', '/tools-analytics', '/privacy', '/terms']);
   const prefetched = new Set();
   const hosted = location.hostname.endsWith('.chatgpt.site');
   const saveData = navigator.connection?.saveData;

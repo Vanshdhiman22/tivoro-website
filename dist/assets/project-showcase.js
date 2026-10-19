@@ -12,7 +12,7 @@
   const reduced = matchMedia('(prefers-reduced-motion: reduce)');
   const capture = new URLSearchParams(location.search).has('capture');
   // More native scroll travel slows the reel without slowing the whole page.
-  const travelRatio = 1.3;
+  const travelRatio = 1.05;
   const finePointer = matchMedia('(hover:hover) and (pointer:fine)');
   let enabled = false, start = 0, distance = 0, frame = 0, current = 0;
   let previousTime = 0, lastScrollTime = 0;

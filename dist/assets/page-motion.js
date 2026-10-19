@@ -1,9 +1,9 @@
+import {ease} from '../../src/motion-config.js';
 // Shared inner-page choreography. Content remains visible without JavaScript.
 (() => {
   const capture = new URLSearchParams(location.search).has('capture');
   const reduced = matchMedia('(prefers-reduced-motion: reduce)');
   const allowed = () => !capture && !reduced.matches;
-  const ease = 'cubic-bezier(.25,.8,.25,1)';
   const active = new Set();
   const plans = new Map();
   const animate = (el, frames, duration = 780, delay = 0) => {
@@ -36,7 +36,7 @@
       animate(stage,[{opacity:.35,translate:'0 36px',clipPath:'inset(5% 3% 5% 3%)'},{opacity:1,translate:'0 0',clipPath:'inset(0% 0% 0% 0%)'}],960);
       const caption = stage.closest('.case,.work-feature,.project-link')?.querySelector('.project-caption');
       if (caption) {
-        lift(caption.querySelector('h3'),100,18,760);
+        lift(caption.querySelector('h2,h3'),100,18,760);
         lift(caption.querySelector('p'),170,14,680);
         lift(caption.querySelector('.arrow'),210,12,680);
       }

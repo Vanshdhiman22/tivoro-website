@@ -3,7 +3,7 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "build": "node build-paper.mjs"
+    "build": "node scripts/build-static.mjs"
   },
   "dependencies": {
     "@designcodeio/threeui": "file:packages/threeui",

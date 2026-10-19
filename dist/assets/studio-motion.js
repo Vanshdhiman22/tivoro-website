@@ -1,10 +1,10 @@
+import {ease} from '../../src/motion-config.js';
 // Tivoro motion direction: readable by default, progressive and interruptible.
 (() => {
   const capture = new URLSearchParams(location.search).has('capture');
   const reduced = matchMedia('(prefers-reduced-motion: reduce)');
   const fine = matchMedia('(hover:hover) and (pointer:fine)');
   const moving = () => !capture && !reduced.matches;
-  const ease = 'cubic-bezier(.25,.8,.25,1)';
   const animations = new Set();
   const play = (element, frames, options = {}) => {
     if (!moving()) return;
@@ -31,6 +31,7 @@
 
   if (!capture) {
     document.querySelectorAll('main h2,.hello h2').forEach(heading => {
+      if (heading.closest('.project-caption')) return;
       // Work by text nodes so authored emphasis and line breaks remain intact.
       const walker = document.createTreeWalker(heading, NodeFilter.SHOW_TEXT);
       const nodes = []; while (walker.nextNode()) nodes.push(walker.currentNode);

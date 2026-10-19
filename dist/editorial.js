@@ -1,15 +1,15 @@
+import {ease} from '../src/motion-config.js';
 // Motion enhances the existing layout; native links and forms keep their behaviour.
 const captureMode = new URLSearchParams(location.search).has('capture');
 if (captureMode) {document.body.dataset.capture = '';document.documentElement.dataset.capture = '';}
 const motionPreference = matchMedia('(prefers-reduced-motion: reduce)');
 const useMotion = () => !captureMode && !motionPreference.matches;
-const ease = 'cubic-bezier(.25,.8,.25,1)';
 const disclosures = new Map();
 
 document.querySelectorAll('details').forEach(details => {
   const summary = details.querySelector(':scope > summary');
   if (!summary) return;
-  const isMenu = details.classList.contains('mobile-menu');
+  const isMenu = details.matches('.mobile-menu,.services-menu');
   const panel = isMenu ? details.querySelector('.menu-panel') : details;
   let animation;
   let desired = details.open;
@@ -116,7 +116,6 @@ if (useMotion()) {
 motionPreference.addEventListener('change',()=>{document.body.dataset.motion=useMotion()?'active':'reduced';if(!useMotion())activeMotion.forEach(animation=>animation.cancel());});
 window.addEventListener('pageshow',event=>{if(event.persisted)activeMotion.forEach(animation=>animation.cancel());});
 
-const f=document.querySelector('#project-form');if(f)f.addEventListener('submit',e=>{e.preventDefault();const d=new FormData(f);const body=['Name: '+d.get('name'),'Business: '+d.get('business'),'Email: '+d.get('email'),'Service: '+d.get('service'),'',d.get('message')].join(String.fromCharCode(10));location.href='mailto:tivorosupport@gmail.com?subject='+encodeURIComponent('Project enquiry: '+(d.get('business')||d.get('name')))+'&body='+encodeURIComponent(body);document.querySelector('#form-status').textContent='Review the message in your email app before sending. If it did not open, email us directly.'});
 
 
 // Depth and reflected light on the real portfolio, without introducing a demo.
