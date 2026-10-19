@@ -151,3 +151,16 @@ html[data-page-arrival=quick] :is(.home-hero,.page-hero,.studio-hero){animation:
 @keyframes quick-content-arrive{from{opacity:.85;translate:0 8px}to{opacity:1;translate:0 0}}
 @media(prefers-reduced-motion:reduce){html[data-page-arrival] :is(.home-hero,.page-hero,.studio-hero){animation:none!important}}
 html[data-capture] :is(.home-hero,.page-hero,.studio-hero){animation:none!important}
+
+/* About story: paired copy uses the space below the opening heading. */
+.story-layout{display:grid;gap:44px}
+.story-intro,.story-columns{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:clamp(40px,6vw,88px);align-items:start}
+.story-heading h2{font-size:clamp(52px,4.8vw,67px);max-width:14ch}
+.story-intro .story-body{padding-top:3px}
+.story-layout .story-body p:last-child{margin-bottom:0}
+.story-columns{padding-top:36px;border-top:1px solid var(--line)}
+.story-columns .lead{font-size:29px;line-height:1.3}
+.story-outro{border-top:1px solid var(--line);padding-top:35px;max-width:100%}
+.story-outro .lead{max-width:43ch;font-size:clamp(29px,3.2vw,43px);line-height:1.2}
+.story-outro .closing{font-size:27px;margin-top:22px}
+@media(max-width:700px){.story-layout{gap:30px}.story-intro,.story-columns{grid-template-columns:1fr;gap:28px}.story-heading h2{font-size:54px}.story-columns{padding-top:28px}.story-intro .story-body{padding:0}.story-intro .lead{font-size:28px}.story-columns .lead{font-size:26px}.story-outro{padding-top:27px}.story-outro .closing{font-size:25px}}
