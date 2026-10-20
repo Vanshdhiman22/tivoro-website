@@ -11,8 +11,8 @@
   const bar = section.querySelector('.showcase-progress span');
   const reduced = matchMedia('(prefers-reduced-motion: reduce)');
   const capture = new URLSearchParams(location.search).has('capture');
-  // More native scroll travel slows the reel without slowing the whole page.
-  const travelRatio = 1.05;
+  // A shorter desktop sequence; smaller screens keep their native swipe rail.
+  const travelRatio = .72;
   const finePointer = matchMedia('(hover:hover) and (pointer:fine)');
   let enabled = false, start = 0, distance = 0, frame = 0, current = 0;
   let previousTime = 0, lastScrollTime = 0;
@@ -62,7 +62,7 @@
     if (frame) cancelAnimationFrame(frame);
     frame = 0;
     previousTime = 0;
-    enabled = !reduced.matches && !capture && innerHeight >= 560;
+    enabled = !reduced.matches && !capture && innerWidth > 900 && innerHeight >= 650;
     section.toggleAttribute('data-pinned', enabled);
     track.style.transform = '';
     viewport.scrollLeft = 0;
@@ -74,6 +74,8 @@
     start = section.getBoundingClientRect().top + scrollY;
     current = enabled ? clamp((scrollY - start) / travelRatio, 0, distance) : 0;
     section.dataset.scrollMode = enabled ? 'pinned' : capture ? 'overview' : 'native';
+    const instruction = section.querySelector('.showcase-instruction');
+    if(instruction) instruction.innerHTML = enabled ? 'Scroll to explore <span aria-hidden="true">→</span>' : 'Swipe or choose a project <span aria-hidden="true">→</span>';
     paint();
   }
   function scheduleMeasure() {

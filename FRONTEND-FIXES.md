@@ -35,3 +35,16 @@ This pass follows the 19 October audit and the user's follow-up instruction to d
 - Final legal business identity and final domain settings.
 
 The earlier audit's browser attribute sample missed the existing `role=status` on the contact status element. This pass preserves that role and adds explicit `aria-live`/`aria-atomic`; the improvement is the clearer draft/copy feedback and fallback.
+
+
+## Review fixes — 20 October 2026
+
+- Reduced heading sizes and vertical spacing. The mobile contact form comes first in the reading order and first name field is visible around 478px from the top at a 358px viewport. Desktop keeps a paired information/form layout.
+- Raised analytics labels from 9px to 12px, supporting copy from 11px to 15px, and captions to 13px. Updated prototype text, project details, process copy and service links to match.
+- Shortened the desktop project sequence with narrower cards and reduced travel. A local 1174px check measured about 2360px of reel height; mobile uses a native swipe rail around 740px tall, with project buttons and keyboard controls.
+- Website service uses a browser-framed real screenshot; Product uses clearly labelled prototype cards; Analytics uses a measurement-plan panel with an illustrative route and readable workflow. No client metrics were invented.
+- Added problem/contribution/experience summaries to five Work projects. Image previews open a native modal with next/previous, keyboard arrows, Escape, focus return and external website links.
+- Shared motion tokens distinguish 240ms controls, 420ms hero arrival, 520ms content entrances and 620ms media. Reduced motion remains supported.
+- Moved charset metadata before the shared navigation bootstrap.
+
+Validation: build/asset/metadata checks for nine pages plus 404; five complete project summaries/previews; desktop and mobile page layouts; no horizontal overflow; first-field placement; native mobile rail selection; keyboard modal traversal and focus restoration; all tested page changes at y=0; no browser console errors. Enquiries remain frontend email-draft preparation.

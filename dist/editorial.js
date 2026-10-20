@@ -1,4 +1,4 @@
-import {ease} from '../src/motion-config.js';
+import {ease,motion} from '../src/motion-config.js';
 // Motion enhances the existing layout; native links and forms keep their behaviour.
 const captureMode = new URLSearchParams(location.search).has('capture');
 if (captureMode) {document.body.dataset.capture = '';document.documentElement.dataset.capture = '';}
@@ -98,9 +98,9 @@ document.body.dataset.motion = useMotion() ? 'active' : 'reduced';
 if (useMotion()) {
   document.querySelectorAll('main h1 .headline-inner').forEach((line,index) => play(line,
     [{transform:'translateY(12px)',opacity:.65},{transform:'translateY(0)',opacity:1}],
-    {duration:420,delay:index*40,easing:ease,fill:'backwards'}));
+    {duration:motion.hero,delay:index*40,easing:ease,fill:'backwards'}));
   const heroFoot = document.querySelector('.home-hero .hero-foot,.page-hero .hero-foot,.studio-hero .hero-foot');
-  if(heroFoot) play(heroFoot,[{opacity:.65,transform:'translateY(8px)'},{opacity:1,transform:'translateY(0)'}],{duration:380,delay:40,easing:ease,fill:'backwards'});
+  if(heroFoot) play(heroFoot,[{opacity:.65,transform:'translateY(8px)'},{opacity:1,transform:'translateY(0)'}],{duration:motion.hero,delay:40,easing:ease,fill:'backwards'});
   if ('IntersectionObserver' in window) {
     const observer = new IntersectionObserver(entries => {
       for (const entry of entries) {
@@ -109,8 +109,8 @@ if (useMotion()) {
           const grouped = entry.target.matches('.service-columns,.founder-grid');
           const elements = grouped ? [...entry.target.children] : [entry.target];
           elements.filter(el=>!el.closest(".project-showcase")).forEach((el,index) => play(el,
-            [{transform:'translateY(28px)',opacity:0},{transform:'translateY(0)',opacity:1}],
-            {duration:680,delay:grouped?index*75:0,easing:ease,fill:'backwards'}));
+            [{transform:'translateY(18px)',opacity:.65},{transform:'translateY(0)',opacity:1}],
+            {duration:motion.enter,delay:grouped?index*motion.stagger:0,easing:ease,fill:'backwards'}));
         }
         observer.unobserve(entry.target);
       }

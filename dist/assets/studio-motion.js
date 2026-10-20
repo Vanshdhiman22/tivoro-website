@@ -1,4 +1,4 @@
-import {ease} from '../../src/motion-config.js';
+import {ease,motion} from '../../src/motion-config.js';
 // Tivoro motion direction: readable by default, progressive and interruptible.
 (() => {
   const capture = new URLSearchParams(location.search).has('capture');
@@ -20,9 +20,9 @@ import {ease} from '../../src/motion-config.js';
       element.dataset.revealed = 'true';
       if (!moving()) continue;
       if (element.matches('h2')) {
-        play(element,[{transform:'translate3d(0,14px,0)',opacity:.65},{transform:'translate3d(0,0,0)',opacity:1}],{duration:500});
+        play(element,[{transform:'translate3d(0,14px,0)',opacity:.65},{transform:'translate3d(0,0,0)',opacity:1}],{duration:motion.enter});
       } else {
-        play(element,[{opacity:.65,transform:'translate3d(0,14px,0)'},{opacity:1,transform:'translate3d(0,0,0)'}],{duration:500});
+        play(element,[{opacity:.65,transform:'translate3d(0,14px,0)'},{opacity:1,transform:'translate3d(0,0,0)'}],{duration:motion.enter});
       }
     }
   }, {threshold:.15,rootMargin:'0px 0px -30px 0px'});

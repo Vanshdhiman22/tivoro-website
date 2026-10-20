@@ -8,6 +8,8 @@ const descriptions=new Set();
 const navigationBoot=await readFile('src/navigation-boot.js','utf8');
 for(const page of [...config.pages,'404']){
  let html=await readFile(`dist/${page}.html`,'utf8');
+ html=html.replace(/<meta charset="utf-8"\s*\/?\s*>/i,'');
+ html=html.replace('<head>','<head><meta charset="utf-8"/>');
  if(!html.includes('data-tivoro-transition-boot'))throw new Error(`Navigation bootstrap missing: ${page}`);
  html=html.replace(/<script data-tivoro-transition-boot="">[\s\S]*?<\/script>/,()=>`<script data-tivoro-transition-boot="">${navigationBoot}</script>`);
  await writeFile(`dist/${page}.html`,html);

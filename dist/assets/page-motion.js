@@ -1,4 +1,4 @@
-import {ease} from '../../src/motion-config.js';
+import {ease,motion} from '../../src/motion-config.js';
 // Shared inner-page choreography. Content remains visible without JavaScript.
 (() => {
   const capture = new URLSearchParams(location.search).has('capture');
@@ -8,12 +8,12 @@ import {ease} from '../../src/motion-config.js';
   const plans = new Map();
   const animate = (el, frames, duration = 780, delay = 0) => {
     if (!allowed() || !el) return;
-    const animation = el.animate(frames, {duration,delay,easing:ease,fill:'backwards'});
+    const animation = el.animate(frames, {duration:Math.min(duration,motion.media),delay:Math.min(delay,180),easing:ease,fill:'backwards'});
     active.add(animation);
     animation.finished.catch(() => {}).finally(() => active.delete(animation));
   };
   const lift = (el, delay = 0, distance = 24, duration = 720) => animate(el,
-    [{opacity:0,translate:`0 ${distance}px`},{opacity:1,translate:'0 0'}],duration,delay);
+    [{opacity:.65,translate:`0 ${Math.min(distance,18)}px`},{opacity:1,translate:'0 0'}],Math.min(duration,motion.enter),delay);
   const observer = new IntersectionObserver(entries => {
     entries.forEach(entry => {
       if (!entry.isIntersecting) return;
