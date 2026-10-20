@@ -20,11 +20,9 @@ import {ease} from '../../src/motion-config.js';
       element.dataset.revealed = 'true';
       if (!moving()) continue;
       if (element.matches('h2')) {
-        element.querySelectorAll('.motion-word-inner').forEach((word, i) => play(word,
-          [{transform:'translate3d(0,108%,0) rotate(4deg)',opacity:0},{transform:'translate3d(0,0,0) rotate(0)',opacity:1}],
-          {duration:740,delay:i*30}));
+        play(element,[{transform:'translate3d(0,14px,0)',opacity:.65},{transform:'translate3d(0,0,0)',opacity:1}],{duration:500});
       } else {
-        play(element,[{opacity:0,transform:'translate3d(0,24px,0)'},{opacity:1,transform:'translate3d(0,0,0)'}],{duration:620});
+        play(element,[{opacity:.65,transform:'translate3d(0,14px,0)'},{opacity:1,transform:'translate3d(0,0,0)'}],{duration:500});
       }
     }
   }, {threshold:.15,rootMargin:'0px 0px -30px 0px'});
@@ -32,19 +30,6 @@ import {ease} from '../../src/motion-config.js';
   if (!capture) {
     document.querySelectorAll('main h2,.hello h2').forEach(heading => {
       if (heading.closest('.project-caption')) return;
-      // Work by text nodes so authored emphasis and line breaks remain intact.
-      const walker = document.createTreeWalker(heading, NodeFilter.SHOW_TEXT);
-      const nodes = []; while (walker.nextNode()) nodes.push(walker.currentNode);
-      nodes.forEach(node => {
-        const fragment = document.createDocumentFragment();
-        for (const text of node.textContent.split(/(\s+)/)) {
-          if (!text.trim()) {fragment.append(document.createTextNode(text));continue;}
-          const outer = document.createElement('span'); outer.className = 'motion-word';
-          const inner = document.createElement('span'); inner.className = 'motion-word-inner';
-          inner.textContent = text; outer.append(inner); fragment.append(outer);
-        }
-        node.replaceWith(fragment);
-      });
       observer.observe(heading);
     });
     document.querySelectorAll('.home-intro p,.home-intro .text-link,.story-body>p,.case-copy,.contact-brief>div,.hello p,.hello .text-link,.footer-baseline,.faq-stack details').forEach(element => observer.observe(element));

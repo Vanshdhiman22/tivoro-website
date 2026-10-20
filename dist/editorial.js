@@ -18,14 +18,14 @@ document.querySelectorAll('details').forEach(details => {
     details.style.removeProperty('overflow');
     summary.setAttribute('aria-expanded', String(details.open));
   };
-  const setOpen = (open, returnFocus = false) => {
+  const setOpen = (open, returnFocus = false, immediate = false) => {
     desired = open;
     if (!animation && details.open === open) { clean(); return; }
     const startHeight = details.getBoundingClientRect().height;
     const startOpacity = isMenu && details.open ? getComputedStyle(panel).opacity : '0';
     animation?.cancel();
     animation = undefined;
-    if (!useMotion()) {
+    if (!useMotion() || immediate) {
       details.open = open;
       clean();
       if (returnFocus) summary.focus({preventScroll:true});
@@ -81,6 +81,11 @@ document.querySelectorAll('details').forEach(details => {
   motionPreference.addEventListener('change', () => setOpen(desired));
 });
 
+// A restored document should not bring an old navigation panel back over its title.
+window.addEventListener('pageshow',()=>{
+  document.querySelectorAll('.services-menu,.mobile-menu').forEach(menu=>disclosures.get(menu)?.setOpen(false,false,true));
+});
+
 // Visible entrances and scroll choreography, with an always-readable fallback.
 const activeMotion = new Set();
 const play = (el, frames, options) => {
@@ -92,10 +97,10 @@ const play = (el, frames, options) => {
 document.body.dataset.motion = useMotion() ? 'active' : 'reduced';
 if (useMotion()) {
   document.querySelectorAll('main h1 .headline-inner').forEach((line,index) => play(line,
-    [{transform:'translateY(105%)',opacity:0},{transform:'translateY(0)',opacity:1}],
-    {duration:720,delay:index*80,easing:ease,fill:'backwards'}));
+    [{transform:'translateY(12px)',opacity:.65},{transform:'translateY(0)',opacity:1}],
+    {duration:420,delay:index*40,easing:ease,fill:'backwards'}));
   const heroFoot = document.querySelector('.home-hero .hero-foot,.page-hero .hero-foot,.studio-hero .hero-foot');
-  if(heroFoot) play(heroFoot,[{opacity:0,transform:'translateY(18px)'},{opacity:1,transform:'translateY(0)'}],{duration:600,delay:120,easing:ease,fill:'backwards'});
+  if(heroFoot) play(heroFoot,[{opacity:.65,transform:'translateY(8px)'},{opacity:1,transform:'translateY(0)'}],{duration:380,delay:40,easing:ease,fill:'backwards'});
   if ('IntersectionObserver' in window) {
     const observer = new IntersectionObserver(entries => {
       for (const entry of entries) {

@@ -5,8 +5,12 @@ const root=process.cwd();
 await build({entryPoints:['src/site.js'],outfile:'dist/assets/site.min.js',bundle:true,minify:true,format:'iife',target:['es2022']});
 const config=JSON.parse(await readFile('site-config.json','utf8'));
 const descriptions=new Set();
+const navigationBoot=await readFile('src/navigation-boot.js','utf8');
 for(const page of [...config.pages,'404']){
- const html=await readFile(`dist/${page}.html`,'utf8');
+ let html=await readFile(`dist/${page}.html`,'utf8');
+ if(!html.includes('data-tivoro-transition-boot'))throw new Error(`Navigation bootstrap missing: ${page}`);
+ html=html.replace(/<script data-tivoro-transition-boot="">[\s\S]*?<\/script>/,()=>`<script data-tivoro-transition-boot="">${navigationBoot}</script>`);
+ await writeFile(`dist/${page}.html`,html);
  if((html.match(/<h1\b/g)||[]).length!==1)throw new Error(`Expected one page heading: ${page}`);
  if(!html.includes('noindex, follow'))throw new Error(`Preview indexing guard missing: ${page}`);
  const description=html.match(/<meta content="([^"]+)" name="description"/);

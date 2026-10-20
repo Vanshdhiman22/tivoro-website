@@ -17,3 +17,12 @@ Verified locally: Work → About → Work, browser Back, and mobile menu → Con
 Added a finite, sequential signal to the analytics illustration and a short sweep through the product prototype. Both begin on intersection and finish within four seconds. The handover rows, planning panel, feature caption and page end now follow the shared entrance rhythm; the closing invitation draws a quiet terracotta rule. The measurement selector animates its changed copy with cancellation on rapid changes and announces the result politely. Project media uses opacity and translation rather than a large animated clip mask. No dependencies, scroll interception or page exit delays were added.
 
 Checks: static build and local references for nine pages plus 404; browser verification of the analytics signal, rapid goal changes, prototype signal, mobile menu to Contact and no horizontal overflow. Reduced-motion and capture rules keep all new decoration static. Frontend only; enquiries still prepare email drafts.
+
+
+## Navigation correction and calmer motion — 20 October 2026
+
+A shared head bootstrap now makes new internal pages begin at x=0/y=0 with instant scroll positioning before and after initial layout. Intentional hash destinations and Back/Forward retain native behaviour. Native restoration is suspended only for initial fresh navigation and restored on pageshow; user input stops late resets. The build inserts the same bootstrap into all nine pages and 404. Restored navigation menus close immediately.
+
+Removed the overlapping whole-section arrival animations and top transition stripe. Hero lines use a readable 12px entrance over 420ms; headings enter as one piece rather than word-by-word masks. Dropdowns sit above the page with a viewport-bounded width.
+
+Browser regression checks passed: homepage footer → Work (0,0), browser Back restoring 6174px, footer → Contact (0,0), Tools (0,0), Services hash landing, Back with menus closed, medium-width overflow check, and mobile footer → Contact at y=0 with no horizontal overflow.

@@ -1,5 +1,4 @@
-// Native navigation starts immediately. The early head bootstrap gives the
-// destination a CSS entrance, without a timer holding up the link's action.
+// Native navigation starts immediately; the head bootstrap resets new pages.
 (() => {
   const normalize = path => path.replace(/\/index\.html$/, '/').replace(/\.html$/, '').replace(/\/$/, '') || '/';
   const pages = new Set(['/', '/about', '/work', '/contact', '/website-design-development', '/product-design-development', '/tools-analytics', '/privacy', '/terms']);

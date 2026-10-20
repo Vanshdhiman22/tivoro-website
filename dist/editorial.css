@@ -129,23 +129,10 @@ body[data-motion=active] .hand-note{animation:note-float 5s 1.2s ease-in-out inf
 .project-showcase .photo .project-screen{border:4px solid var(--paper);border-radius:5px;box-shadow:0 12px 28px #0003}
 @view-transition{navigation:none}
 
-/* Page changes: a steady header, then two softly staggered content planes.
-   Only the opening sections move; long pages never become one giant layer. */
-html[data-page-arrival=flow] main>section:first-child{animation:page-content-arrive 620ms cubic-bezier(.22,.75,.25,1) backwards}
-html[data-page-arrival=flow] main>section:nth-child(2){animation:page-next-arrive 700ms cubic-bezier(.22,.75,.25,1) 65ms backwards}
-html[data-page-arrival=flow] body::before{content:"";position:fixed;inset:0 0 auto;height:3px;background:var(--rust);z-index:150;pointer-events:none;transform-origin:left;animation:page-thread 720ms cubic-bezier(.22,.75,.25,1) both}
-@keyframes page-content-arrive{from{opacity:.28;translate:0 26px}to{opacity:1;translate:0 0}}
-@keyframes page-next-arrive{from{opacity:.55;translate:0 32px}to{opacity:1;translate:0 0}}
-@keyframes page-thread{0%{transform:scaleX(.08);opacity:.8}75%{transform:scaleX(1);opacity:.65}100%{transform:scaleX(1);opacity:0}}
-@media(max-width:700px){
- html[data-page-arrival=flow] main>section:first-child{animation-duration:540ms}
- html[data-page-arrival=flow] main>section:nth-child(2){animation-duration:600ms;animation-delay:40ms}
- @keyframes page-content-arrive{from{opacity:.35;translate:0 18px}to{opacity:1;translate:0 0}}
- @keyframes page-next-arrive{from{opacity:.65;translate:0 22px}to{opacity:1;translate:0 0}}
-}
-@media(prefers-reduced-motion:reduce){html[data-page-arrival] main>section,html[data-page-arrival] body::before{animation:none!important}html[data-page-arrival] body::before{display:none}}
-html[data-capture] main>section,html[data-capture] body::before{animation:none!important}
-html[data-capture] body::before{display:none}
+/* Entrances belong to individual elements; pages keep their natural position. */
+.site-header{position:relative;z-index:50}
+.services-menu .menu-panel{left:auto;right:0;max-width:calc(100vw - 40px)}
+.mobile-menu .menu-panel{max-width:calc(100vw - 40px)}
 
 /* About story: paired copy uses the space below the opening heading. */
 .story-layout{display:grid;gap:44px}
