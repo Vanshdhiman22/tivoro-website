@@ -10,3 +10,10 @@ One scroll scheduler updates only visible images from cached screenshot geometry
 Internal page links retain immediate native navigation and intent prefetch. An early, session-scoped arrival marker triggers a 620ms fade/glide on the first section and a 700ms, 65ms-staggered entrance on the next section. Mobile uses 540/600ms and smaller distances. The header stays still, with a 720ms terracotta top line. There is no exit delay or blocking overlay. Reduced motion and capture mode disable this effect; bfcache restoration clears the marker.
 
 Verified locally: Work → About → Work, browser Back, and mobile menu → Contact (390px, 540ms arrival, no horizontal overflow). Shared bundle/static checks passed for nine pages plus 404.
+
+
+## Final frontend polish — 20 October 2026
+
+Added a finite, sequential signal to the analytics illustration and a short sweep through the product prototype. Both begin on intersection and finish within four seconds. The handover rows, planning panel, feature caption and page end now follow the shared entrance rhythm; the closing invitation draws a quiet terracotta rule. The measurement selector animates its changed copy with cancellation on rapid changes and announces the result politely. Project media uses opacity and translation rather than a large animated clip mask. No dependencies, scroll interception or page exit delays were added.
+
+Checks: static build and local references for nine pages plus 404; browser verification of the analytics signal, rapid goal changes, prototype signal, mobile menu to Contact and no horizontal overflow. Reduced-motion and capture rules keep all new decoration static. Frontend only; enquiries still prepare email drafts.

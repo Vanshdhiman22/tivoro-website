@@ -59,6 +59,15 @@ window.addEventListener('hashchange',markServices);markServices();
 
 const goalSelect=document.querySelector('#measurement-goal');
 if(goalSelect){
+ let goalAnimation;
+ const goalPreview=document.querySelector('.goal-preview');
+ const motionPreference=matchMedia('(prefers-reduced-motion: reduce)');
+ const animateGoal=()=>{
+  goalAnimation?.cancel();
+  if(motionPreference.matches || new URLSearchParams(location.search).has('capture'))return;
+  goalAnimation=goalPreview.animate([{opacity:.35,translate:'0 10px'},{opacity:1,translate:'0 0'}],{duration:380,easing:'cubic-bezier(.25,.8,.25,1)'});
+ };
+ motionPreference.addEventListener('change',()=>goalAnimation?.cancel());
  const goals={
   enquiry:['A request received.','Count enquiries that successfully reach your team, with the relevant service and source when available.','Which channels and services lead to useful conversations.'],
   booking:['A booking confirmed.','Count confirmed bookings after a successful reservation, using the booking system as the source of confirmation.','Which services people book and where the booking journey can become clearer.'],
@@ -69,6 +78,7 @@ if(goalSelect){
   document.querySelector('#goal-result-title').textContent=goal[0];
   document.querySelector('#goal-result-copy').textContent=goal[1];
   document.querySelector('#goal-result-review').textContent=goal[2];
+  animateGoal();
   track('measurement_demo',goalSelect.value);
  });
 }

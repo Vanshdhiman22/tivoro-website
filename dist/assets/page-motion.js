@@ -33,7 +33,7 @@ import {ease} from '../../src/motion-config.js';
   media.forEach((stage,i) => {
     stage.classList.add('motion-project-media');
     watch(stage, () => {
-      animate(stage,[{opacity:.35,translate:'0 36px',clipPath:'inset(5% 3% 5% 3%)'},{opacity:1,translate:'0 0',clipPath:'inset(0% 0% 0% 0%)'}],960);
+      animate(stage,[{opacity:.35,translate:'0 28px'},{opacity:1,translate:'0 0'}],860);
       const caption = stage.closest('.case,.work-feature,.project-link')?.querySelector('.project-caption');
       if (caption) {
         lift(caption.querySelector('h2,h3'),100,18,760);
@@ -53,6 +53,7 @@ import {ease} from '../../src/motion-config.js';
 
   // Each service has its own movement while retaining the shared rhythm.
   document.querySelectorAll('.product-canvas').forEach(canvas=>watch(canvas,()=>{
+    canvas.dataset.vignetteVisible='true';
     lift(canvas,0,20,800);
     canvas.querySelectorAll('.paper-prototype').forEach((paper,i)=>{
       lift(paper,100+i*110,34,920);
@@ -60,6 +61,7 @@ import {ease} from '../../src/motion-config.js';
     });
   }));
   document.querySelectorAll('.analytics-canvas').forEach(canvas=>watch(canvas,()=>{
+    canvas.dataset.vignetteVisible='true';
     lift(canvas,0,20,800);
     canvas.querySelectorAll('.analytics-path article').forEach((node,i)=>lift(node,120+i*140,26,800));
     canvas.querySelectorAll('.analytics-path>.arrow').forEach((arrow,i)=>animate(arrow,[{opacity:0,translate:'-12px 0'},{opacity:1,translate:'0 0'}],600,240+i*140));
@@ -76,6 +78,15 @@ import {ease} from '../../src/motion-config.js';
     [...form.children].forEach((row,i)=>lift(row,Math.min(i,5)*65,18,680));
   }));
   document.querySelectorAll('.scope-note,.concept-caption,.split-heading>p,.process-note>p,.hero-meta,.story-heading>p').forEach(el=>watch(el,()=>lift(el,0,20,740)));
+
+  // Carry the rhythm through the handover, interactive example and page end.
+  document.querySelectorAll('.project-plan ul').forEach(list=>watch(list,()=>{
+    [...list.children].forEach((row,i)=>lift(row,Math.min(i,3)*65,16,620));
+  }));
+  document.querySelectorAll('.goal-demo-panel,.feature-caption,.page-end,.footer-meta').forEach(el=>watch(el,()=>lift(el,0,16,620)));
+  document.querySelectorAll('.hello').forEach(el=>watch(el,()=>{
+    el.dataset.signatureVisible='true';
+  }));
 
   // A finite cue makes the Work page invite scrolling without constant motion.
   if(document.body.dataset.page==='work') {
@@ -95,6 +106,7 @@ import {ease} from '../../src/motion-config.js';
   function settle() {
     active.forEach(animation=>animation.cancel());
     document.querySelectorAll('.motion-rule').forEach(el=>el.dataset.ruleVisible='true');
+    document.querySelectorAll('[data-vignette-visible]').forEach(el=>el.removeAttribute('data-vignette-visible'));
   }
   reduced.addEventListener('change',()=>{if(reduced.matches)settle();});
   window.addEventListener('pageshow',event=>{if(event.persisted)settle();});
