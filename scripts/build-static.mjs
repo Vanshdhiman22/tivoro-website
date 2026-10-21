@@ -1,5 +1,5 @@
 import {build} from 'esbuild';
-import {readFile,writeFile,stat,mkdir,cp,readdir} from 'node:fs/promises';
+import {readFile,writeFile,stat,mkdir,cp,readdir,unlink} from 'node:fs/promises';
 import path from 'node:path';
 const root=process.cwd();
 await build({entryPoints:['src/site.js'],outfile:'frontend/assets/site.min.js',bundle:true,minify:true,format:'iife',target:['es2022']});
@@ -21,13 +21,16 @@ for(const page of [...config.pages,'404']){
   const ref=match[1].split(/[?#]/)[0];
   if(/^(https?:|mailto:|tel:|data:)/.test(ref))continue;
   if(!ref)continue;
-  if(!(await stat(path.join(root,'frontend',ref)).catch(()=>null)))throw new Error(`Missing ${ref} on ${page}`);
+  const assetRef=ref==='home.html'?'index.html':ref;
+  if(!(await stat(path.join(root,'frontend',assetRef)).catch(()=>null)))throw new Error(`Missing ${ref} on ${page}`);
  }
 }
 console.log('Built one shared script; validated nine pages plus 404 and local asset references.');
 
 await mkdir("public",{recursive:true});
-await cp("frontend","public",{recursive:true});
+// HTML is served by the Worker so public/index.html cannot bypass the entry redirect.
+for(const name of await readdir('public')){if(name.endsWith('.html'))await unlink(path.join('public',name));}
+await cp("frontend","public",{recursive:true,filter:source=>!source.endsWith('.html')});
 await mkdir("server",{recursive:true});
 const pages={};for(const name of await readdir("frontend")){if(name.endsWith(".html"))pages[name]=await readFile("frontend/"+name,"utf8");}
 await writeFile("server/pages.generated.json",JSON.stringify(pages));

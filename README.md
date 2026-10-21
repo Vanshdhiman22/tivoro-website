@@ -4,6 +4,8 @@ Tivoro's responsive website for website design, digital products and business to
 
 Live website: https://tivoro-studio-preview.mossy-petal-9415.chatgpt.site/
 
+The main website link opens **About us** first. The editorial homepage remains available at `/home`; brand links return to About us.
+
 ## Project structure
 
 - `frontend/`: authored marketing pages, styles and image assets.
