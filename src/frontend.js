@@ -1,4 +1,4 @@
-// Front-end contact preparation. No server submission or third-party tracking.
+// Secure server submission, with an explicit email-draft fallback.
 const serviceNames = {
   'website-design-development':'Website design & development',
   'product-design-development':'Product design & development',
@@ -13,19 +13,53 @@ if(form){
   if(serviceNames[service])form.elements.service.value=serviceNames[service];
   const preview=document.querySelector('#brief-preview');
   const status=document.querySelector('#form-status');
+  const submit=form.querySelector('button[type="submit"]');
+  let token='',submissionId=crypto.randomUUID(),busy=false;
+  const loadSession=async()=>{
+    const response=await fetch('/api/enquiries/session',{credentials:'same-origin',cache:'no-store'});
+    const data=await response.json();if(!response.ok)throw new Error(data.error||'The secure form could not be started.');
+    token=data.token;return token;
+  };
+  const clearErrors=()=>{
+    form.querySelectorAll('.field-error').forEach(el=>el.remove());
+    for(const field of form.querySelectorAll('[aria-invalid]')){field.removeAttribute('aria-invalid');field.removeAttribute('aria-describedby');field.setCustomValidity('');}
+  };
   const brief=()=>{
     const data=new FormData(form);
     return ['Project enquiry for Tivoro','','Name: '+(data.get('name')||''),'Business: '+(data.get('business')||''),'Email: '+(data.get('email')||''),'Service: '+(data.get('service')||''),'',data.get('message')||''].join('\n');
   };
   const update=()=>preview.value=brief();
-  form.addEventListener('input',update);form.addEventListener('change',update);update();
-  form.addEventListener('submit',event=>{
+  form.addEventListener('input',()=>{clearErrors();update();});form.addEventListener('change',update);update();
+  form.addEventListener('submit',async event=>{
     event.preventDefault();
-    if(!form.reportValidity())return;
+    if(busy||!form.reportValidity())return;
+    busy=true;submit.disabled=true;submit.textContent='Sending enquiry…';form.setAttribute('aria-busy','true');clearErrors();status.textContent='Sending your enquiry securely…';
     update();
-    const data=new FormData(form);
+    try{
+      if(!token)await loadSession();
+      const values=Object.fromEntries(new FormData(form));
+      const response=await fetch('/api/enquiries',{method:'POST',credentials:'same-origin',headers:{'Content-Type':'application/json'},body:JSON.stringify({...values,token,submissionId}),signal:AbortSignal.timeout(20000)});
+      const result=await response.json();
+      if(!response.ok){
+        if(response.status===403)token='';
+        for(const [name,message] of Object.entries(result.fields||{})){
+          const field=form.elements.namedItem(name);if(!field)continue;
+          const hint=document.createElement('small');hint.className='field-error';hint.id='error-'+name;hint.textContent=String(message);field.closest('label').append(hint);field.setAttribute('aria-invalid','true');field.setAttribute('aria-describedby',hint.id);
+        }
+        form.querySelector('[aria-invalid]')?.focus();
+        throw new Error(result.error||'Your enquiry could not be saved. Please try again.');
+      }
+      if(!result.saved)throw new Error('The enquiry could not be confirmed. Please try again.');
+      status.textContent='Thank you—your enquiry is saved. Reference '+result.reference+'. Tivoro will review it and reply using the email you provided.';
+      track('enquiry_saved',values.service);form.reset();submissionId=crypto.randomUUID();update();
+      if(serviceNames[service])form.elements.service.value=serviceNames[service];
+    }catch(error){status.textContent=(error.name==='TimeoutError'?'The connection took too long. Please try again; your enquiry will not be duplicated.':error.message||'The connection failed. Please try again.')+' You can also open an email draft or copy your project brief below.';}
+    finally{busy=false;submit.disabled=false;submit.textContent='Send project enquiry ↗';form.removeAttribute('aria-busy');}
+  });
+  document.querySelector('#email-brief').addEventListener('click',()=>{
+    if(!form.reportValidity())return;update();const data=new FormData(form);
     location.href='mailto:tivorosupport@gmail.com?subject='+encodeURIComponent('Project enquiry: '+(data.get('business')||data.get('name')))+'&body='+encodeURIComponent(brief());
-    status.textContent='Your email draft is ready to review in your email app. Nothing has been sent by this website. If the app did not open, use “Copy project brief” below.';
+    status.textContent='Your email draft is ready to review in your email app. Nothing has been sent by this email-draft option.';
     track('email_draft_prepared',data.get('service'));
   });
   document.querySelector('#copy-brief').addEventListener('click',async()=>{
